@@ -72,6 +72,6 @@ TEST(Json, exceptions) {
 
   EXPECT_THROW(auto a = Json(wrong_text1), std::invalid_argument);
   EXPECT_THROW(auto b = Json(wrong_text2), std::invalid_argument);
-  EXPECT_THROW(auto c = (wrong_text3), std::invalid_argument);
-  EXPECT_THROW(auto d = (wrong_text4), std::invalid_argument);
+  EXPECT_THROW(auto c = Json(wrong_text3), std::invalid_argument);
+  EXPECT_THROW(auto d = Json(wrong_text4), std::invalid_argument);
 }
