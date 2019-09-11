@@ -272,9 +272,9 @@ std::any& Json::operator[](int index) {
     throw std::invalid_argument("is not an array");
 }
 
-static Json Json::parse(const std::string& s) { return Json(s); }
+Json Json::parse(const std::string& s) { return Json(s); }
 
-static Json Json::parseFile(const std::string& path_to_file) {
+Json Json::parseFile(const std::string& path_to_file) {
   std::string s = readFile(path_to_file);
   return Json(s);
 }

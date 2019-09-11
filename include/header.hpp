@@ -23,25 +23,18 @@ class Json {
   bool is_o;
 
  public:
-  Json(const std::string& s);
+  explicit Json(const std::string& s);
 
   bool is_array() const;
 
   bool is_object() const;
 
-  // Метод возвращает значение по ключу key, если экземпляр является
-  // JSON-объектом.
   std::any& operator[](const std::string& key);
 
-  // Метод возвращает значение по индексу index, если экземпляр является
-  // JSON-массивом.
   std::any& operator[](int index);
 
-  // Метод возвращает объект класса Json из строки, содержащей Json-данные.
   static Json parse(const std::string& s);
 
-  // Метод возвращает объекта класса Json из файла, содержащего Json-данные в
-  // текстовом формате.
   static Json parseFile(const std::string& path_to_file);
 
  private:

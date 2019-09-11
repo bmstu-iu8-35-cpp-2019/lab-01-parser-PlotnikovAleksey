@@ -17,7 +17,8 @@ TEST(Json, Construct) {
   EXPECT_EQ(obj.is_object(), true);
   EXPECT_EQ(std::any_cast<double>(obj["orderID"]), 12345.);
   EXPECT_EQ(std::any_cast<std::string>(obj["shopperName"]), "Ivan");
-  EXPECT_EQ(std::any_cast<std::string>(obj["shopperEmail"]), "ivanov@example.com");
+  EXPECT_EQ(std::any_cast<std::string>(obj["shopperEmail"]),
+            "ivanov@example.com");
 
   auto cont = std::any_cast<Json>(obj["contents"]);
 
