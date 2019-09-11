@@ -70,8 +70,8 @@ TEST(Json, exceptions) {
       "{\"orderID\": 12345,\"shopperName\": \"Ivan\",\"shopperEmail\" : "
       "ivanov@example.com,\"orderCompleted\": true}";
 
-  EXPECT_THROW(Json(wrong_text1), std::invalid_argument);
-  EXPECT_THROW(Json(wrong_text2), std::invalid_argument);
-  EXPECT_THROW(Json(wrong_text3), std::invalid_argument);
-  EXPECT_THROW(Json(wrong_text4), std::invalid_argument);
+  EXPECT_THROW(auto a = Json(wrong_text1), std::invalid_argument);
+  EXPECT_THROW(auto b = Json(wrong_text2), std::invalid_argument);
+  EXPECT_THROW(auto c = (wrong_text3), std::invalid_argument);
+  EXPECT_THROW(auto d = (wrong_text4), std::invalid_argument);
 }
