@@ -18,8 +18,7 @@ huntergate(
   SHA1 "70287b1ffa810ee4e952052a9adff9b4856d0d54"
 )
 
-# TODO: rename project and delete this comment
-project(template)
+project(lab01)
 string(APPEND CMAKE_CXX_FLAGS " -pedantic -Werror -Wall -Wextra")
 string(APPEND CMAKE_CXX_FLAGS " -Wno-unused-command-line-argument")
 string(APPEND CMAKE_CXX_FLAGS " -Wshadow -Wnon-virtual-dtor")
@@ -27,25 +26,20 @@ string(APPEND CMAKE_CXX_FLAGS " -Wshadow -Wnon-virtual-dtor")
 hunter_add_package(GTest)
 find_package(GTest CONFIG REQUIRED)
 
-# TODO: change template word to project name and delete this comment
-add_library(template STATIC
-  # enum your files and delete this comment
+add_library(lab01 STATIC
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/source.cpp
 )
 add_executable(tests
-  # TODO: enum your files and delete this comment
   ${CMAKE_CURRENT_SOURCE_DIR}/tests/test.cpp
 )
 
-# TODO: change template word to project name and delete this comment
-target_include_directories(template 
+target_include_directories(lab01 
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 target_include_directories(tests 
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
-# TODO: change template word to project name and delete this comment
-target_link_libraries(tests GTest::main template)
+target_link_libraries(tests GTest::main lab01)
 
 enable_testing()
 add_test(NAME unit_tests COMMAND tests) 
@@ -54,8 +48,7 @@ if(BUILD_COVERAGE)
   set(ENABLE_COVERAGE ON CACHE BOOL "Enable coverage build." FORCE)
   list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
   find_package(codecov)
-  # TODO: change template word to project name and delete this comment
-  add_coverage(template)
+  add_coverage(lab01)
   add_coverage(tests)
   list(APPEND LCOV_REMOVE_PATTERNS "'${PROJECT_SOURCE_DIR}/tests/*'")
   coverage_evaluate()
