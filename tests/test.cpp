@@ -58,6 +58,17 @@ TEST(Json, parse) {
   EXPECT_EQ(std::any_cast<std::string>(t1["Having fun?"]), "Defenetly yes");
 }
 
+TEST(Json, parsefile) {
+  Json obj = Json::parseFile("../myfile.json");
+
+  EXPECT_EQ(std::any_cast<double>(obj["ID"]), 322228.);
+  EXPECT_EQ(std::any_cast<std::string>(obj["SortAs"]), "SGML");
+  EXPECT_EQ(std::any_cast<std::string>(obj["GlossTerm"]),
+            "Standard Generalized Markup Language");
+  EXPECT_EQ(std::any_cast<std::string>(obj["Acronym"]), "SGML");
+  EXPECT_EQ(std::any_cast<std::string>(obj["Abbrev"]), "ISO 8879:1986");
+}
+
 TEST(Json, exceptions) {
   std::string wrong_text1 =
       "[ 1.4567 50.67, null,{ \"Having fun?\":\"Defenetly yes\" }]";
