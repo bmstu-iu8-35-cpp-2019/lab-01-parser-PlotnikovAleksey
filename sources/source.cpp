@@ -322,3 +322,20 @@ bool Json::parse_bool(const std::string& s, size_t& pos) {
   }
   return res;
 }
+
+json parse_tickers(json def) {
+  if (!(def.is_array())) throw std::invalid_argument("wrong input data");
+  if (def.size() != 3) throw std::invalid_argument("wrong input data");
+  if ((def[0].size() != def[1].size()) || (def[0].size() != def[2].size()) ||
+      (def[1].size() != def[2].size()))
+    throw std::invalid_argument("wrong input data");
+  json res;
+  for (size_t i = 0; i < def[0].size(); i++) {
+    json temp;
+	temp["description"] = def[2][i];
+    temp["id"] = def[1][i];
+    temp["ticker"] = def[0][i];
+    res.push_back(temp);
+  }
+  return res;
+}

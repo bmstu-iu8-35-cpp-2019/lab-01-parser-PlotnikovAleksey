@@ -12,6 +12,11 @@
 #include <unordered_map>
 #include <vector>
 
+//for task 3
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
+
 enum State { find_key_or_end, find_colon, find_value, find_comma_or_end };
 
 std::string readFile(const std::string& fileName);
@@ -47,4 +52,6 @@ class Json {
   bool parse_bool(const std::string& s, size_t& pos);
 };
 
+//for task 3
+json parse_tickers(json def);
 #endif // INCLUDE_HEADER_HPP_

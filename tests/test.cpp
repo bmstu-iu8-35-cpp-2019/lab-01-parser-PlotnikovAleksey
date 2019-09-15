@@ -1,7 +1,7 @@
 // Copyright 2019 Plotnikov Aleksey <alex280201@gmail.com>
 
 #include <gtest/gtest.h>
-
+#include <nlohmann/json.hpp>
 #include <header.hpp>
 
 TEST(Json, Construct) {
@@ -12,7 +12,6 @@ TEST(Json, Construct) {
       "56,\"productName\" : \"super-duper\",\"quantity\" : 3}, "
       "true],\"orderCompleted\": true}";
   Json obj(text);
-
   EXPECT_EQ(obj.is_array(), false);
   EXPECT_EQ(obj.is_object(), true);
   EXPECT_EQ(std::any_cast<double>(obj["orderID"]), 12345.);
@@ -59,14 +58,14 @@ TEST(Json, parse) {
 }
 
 TEST(Json, parsefile) {
-  Json obj = Json::parseFile("../myfile.json");
+	Json obj = Json::parseFile("myfile.json");
 
-  EXPECT_EQ(std::any_cast<double>(obj["ID"]), 322228.);
-  EXPECT_EQ(std::any_cast<std::string>(obj["SortAs"]), "SGML");
-  EXPECT_EQ(std::any_cast<std::string>(obj["GlossTerm"]),
-            "Standard Generalized Markup Language");
-  EXPECT_EQ(std::any_cast<std::string>(obj["Acronym"]), "SGML");
-  EXPECT_EQ(std::any_cast<std::string>(obj["Abbrev"]), "ISO 8879:1986");
+	EXPECT_EQ(std::any_cast<double>(obj["ID"]), 322228.);
+    EXPECT_EQ(std::any_cast<std::string>(obj["SortAs"]), "SGML");
+    EXPECT_EQ(std::any_cast<std::string>(obj["GlossTerm"]),
+                  "Standard Generalized Markup Language");
+    EXPECT_EQ(std::any_cast<std::string>(obj["Acronym"]), "SGML");
+    EXPECT_EQ(std::any_cast<std::string>(obj["Abbrev"]), "ISO 8879:1986");
 }
 
 TEST(Json, exceptions) {
@@ -85,4 +84,22 @@ TEST(Json, exceptions) {
   EXPECT_THROW(auto b = Json(wrong_text2), std::invalid_argument);
   EXPECT_THROW(auto c = Json(wrong_text3), std::invalid_argument);
   EXPECT_THROW(auto d = Json(wrong_text4), std::invalid_argument);
+}
+
+TEST(json, parse_tickers) {
+  json obj = {{"Si-9.15", "RTS-9.15", "GAZP-9.15"},
+              {100024, 100027, 100050},
+              {"Futures contract for USD/RUB", "Futures contract for index RTS",
+               "Futures contract for Gazprom shares"}};
+  auto res = parse_tickers(obj);
+
+  EXPECT_EQ(res[0]["ticker"], "Si-9.15");
+  EXPECT_EQ(res[1]["ticker"], "RTS-9.15");
+  EXPECT_EQ(res[2]["ticker"], "GAZP-9.15");
+  EXPECT_EQ(res[0]["id"], 100024);
+  EXPECT_EQ(res[1]["id"], 100027);
+  EXPECT_EQ(res[2]["id"], 100050);
+  EXPECT_EQ(res[0]["description"], "Futures contract for USD/RUB");
+  EXPECT_EQ(res[1]["description"], "Futures contract for index RTS");
+  EXPECT_EQ(res[2]["description"], "Futures contract for Gazprom shares");
 }

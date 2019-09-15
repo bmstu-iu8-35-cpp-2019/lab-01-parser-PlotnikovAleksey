@@ -26,6 +26,9 @@ string(APPEND CMAKE_CXX_FLAGS " -Wshadow -Wnon-virtual-dtor")
 hunter_add_package(GTest)
 find_package(GTest CONFIG REQUIRED)
 
+hunter_add_package(nlohmann_json)
+find_package(nlohmann_json CONFIG REQUIRED)
+
 add_library(lab01 STATIC
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/source.cpp
 )
@@ -39,6 +42,8 @@ target_include_directories(lab01
 target_include_directories(tests 
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
+target_link_libraries(lab01 nlohmann_json::nlohmann_json)
+target_link_libraries(tests nlohmann_json::nlohmann_json)
 target_link_libraries(tests GTest::main lab01)
 
 enable_testing()
