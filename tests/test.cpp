@@ -58,9 +58,9 @@ TEST(Json, parse) {
 }
 
 TEST(Json, parsefile) {
-	Json obj = Json::parseFile("../myfile.json");
+    Json obj = Json::parseFile("../myfile.json");
 
-	EXPECT_EQ(std::any_cast<double>(obj["ID"]), 322228.);
+    EXPECT_EQ(std::any_cast<double>(obj["ID"]), 322228.);
     EXPECT_EQ(std::any_cast<std::string>(obj["SortAs"]), "SGML");
     EXPECT_EQ(std::any_cast<std::string>(obj["GlossTerm"]),
                   "Standard Generalized Markup Language");

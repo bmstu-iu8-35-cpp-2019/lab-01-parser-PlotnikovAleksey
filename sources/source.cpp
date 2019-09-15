@@ -332,7 +332,7 @@ json parse_tickers(json def) {
   json res;
   for (size_t i = 0; i < def[0].size(); i++) {
     json temp;
-	temp["description"] = def[2][i];
+    temp["description"] = def[2][i];
     temp["id"] = def[1][i];
     temp["ticker"] = def[0][i];
     res.push_back(temp);
