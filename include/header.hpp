@@ -43,6 +43,10 @@ class Json {
   static Json parseFile(const std::string& path_to_file);
 
  private:
+  void brace_check(const std::string& s, size_t& pos, bool is_usual);
+
+  std::vector<std::any> parse_array(const std::string& s, size_t& pos);
+
   std::string parse_string(const std::string& s, size_t& pos);
 
   double parse_number(const std::string& s, size_t& pos);

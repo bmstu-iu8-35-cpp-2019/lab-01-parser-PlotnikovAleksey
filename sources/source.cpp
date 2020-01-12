@@ -107,15 +107,7 @@ Json::Json(const std::string& s) {
           value = Json(sub);
           state = find_comma_or_end;
           _data[key] = value;
-          int left_brace_counter = 1;
-          int right_brace_counter = 0;
-          while (left_brace_counter != right_brace_counter) {
-            ind++;
-            if (ind == s.size())
-              throw std::invalid_argument("wrong data format");
-            if (s[ind] == '{') left_brace_counter++;
-            if (s[ind] == '}') right_brace_counter++;
-          }
+          brace_check(s, ind, true);
           continue;
         } else {
           throw std::invalid_argument("wrong data format");
@@ -127,15 +119,7 @@ Json::Json(const std::string& s) {
           value = Json(sub);
           state = find_comma_or_end;
           _data[key] = value;
-          int left_SQbrace_counter = 1;
-          int right_SQbrace_counter = 0;
-          while (left_SQbrace_counter != right_SQbrace_counter) {
-            ind++;
-            if (ind == s.size())
-              throw std::invalid_argument("wrong data format");
-            if (s[ind] == '[') left_SQbrace_counter++;
-            if (s[ind] == ']') right_SQbrace_counter++;
-          }
+          brace_check(s, ind, false);
           continue;
         } else {
           throw std::invalid_argument("wrong data format");
@@ -144,111 +128,10 @@ Json::Json(const std::string& s) {
     }
     data = _data;
   } else if (s[ind] == '[') {
-    ind += 1;
+    ind++;
     is_a = true;
     is_o = false;
-    std::any value;
-    State state = find_value;
-    std::vector<std::any> _data;
-    for (; ind < s.size(); ind++) {
-      if (s[ind] == ' ' || s[ind] == '\t' || s[ind] == '\n') continue;
-      if (std::isdigit(s[ind])) {
-        if (state == find_value) {
-          value = parse_number(s, ind);
-          _data.push_back(value);
-          state = find_comma_or_end;
-          continue;
-        } else {
-          throw std::invalid_argument("wrong data format");
-        }
-      }
-      if (s[ind] == '-') {
-        if (state == find_value && std::isdigit(s[ind + 1])) {
-          value = parse_number(s, ind);
-          state = find_comma_or_end;
-          _data.push_back(value);
-          continue;
-        } else {
-          throw std::invalid_argument("wrong data format");
-        }
-      }
-      if (s[ind] == 't' || s[ind] == 'f') {
-        if (state == find_value) {
-          value = parse_bool(s, ind);
-          state = find_comma_or_end;
-          _data.push_back(value);
-          continue;
-        } else {
-          throw std::invalid_argument("wrong data format");
-        }
-      }
-      if (s[ind] == 'n') {
-        if (state == find_value) {
-          parse_null(s, ind);
-          std::any temp;
-          state = find_comma_or_end;
-          _data.push_back(temp);
-          continue;
-        } else {
-          throw std::invalid_argument("wrong data format");
-        }
-      }
-      if (s[ind] == ',') {
-        if (state == find_comma_or_end) {
-          state = find_value;
-          continue;
-        } else {
-          throw std::invalid_argument("wrong data format");
-        }
-      }
-      if (s[ind] == '[') {
-        if (state == find_value) {
-          std::string sub = s.substr(ind);
-          value = Json(sub);
-          state = find_comma_or_end;
-          _data.push_back(value);
-          int left_SQbrace_counter = 1;
-          int right_SQbrace_counter = 0;
-          while (left_SQbrace_counter != right_SQbrace_counter) {
-            ind++;
-            if (ind == s.size())
-              throw std::invalid_argument("wrong data format");
-            if (s[ind] == '[') left_SQbrace_counter++;
-            if (s[ind] == ']') right_SQbrace_counter++;
-          }
-          continue;
-        } else {
-          throw std::invalid_argument("wrong data format");
-        }
-      }
-      if (s[ind] == '{') {
-        if (state == find_value) {
-          std::string sub = s.substr(ind);
-          value = Json(sub);
-          state = find_comma_or_end;
-          _data.push_back(value);
-          int left_brace_counter = 1;
-          int right_brace_counter = 0;
-          while (left_brace_counter != right_brace_counter) {
-            ind++;
-            if (ind == s.size())
-              throw std::invalid_argument("wrong data format");
-            if (s[ind] == '{') left_brace_counter++;
-            if (s[ind] == '}') right_brace_counter++;
-          }
-          continue;
-        } else {
-          throw std::invalid_argument("wrong data format");
-        }
-      }
-      if (s[ind] == ']') {
-        if (state == find_comma_or_end)
-          break;
-        else
-          throw std::invalid_argument("wrong data format");
-      }
-    }
-    data = _data;
+    data = parse_array(s, ind);
   } else {
     throw std::invalid_argument("not a Json format");
   }
@@ -277,6 +160,117 @@ Json Json::parse(const std::string& s) { return Json(s); }
 Json Json::parseFile(const std::string& path_to_file) {
   std::string s = readFile(path_to_file);
   return Json(s);
+}
+
+void Json::brace_check(const std::string& s, size_t& pos, bool is_usual) {
+  if (is_usual) {
+    int left_brace_counter = 1;
+    int right_brace_counter = 0;
+    while (left_brace_counter != right_brace_counter) {
+      pos++;
+      if (pos == s.size()) throw std::invalid_argument("wrong data format");
+      if (s[pos] == '{') left_brace_counter++;
+      if (s[pos] == '}') right_brace_counter++;
+    }
+  } else {
+    int left_SQbrace_counter = 1;
+    int right_SQbrace_counter = 0;
+    while (left_SQbrace_counter != right_SQbrace_counter) {
+      pos++;
+      if (pos == s.size()) throw std::invalid_argument("wrong data format");
+      if (s[pos] == '[') left_SQbrace_counter++;
+      if (s[pos] == ']') right_SQbrace_counter++;
+    }
+  }
+}
+
+std::vector<std::any> Json::parse_array(const std::string& s, size_t& pos) {
+  std::any value;
+  State state = find_value;
+  std::vector<std::any> _data;
+  for (; pos < s.size(); pos++) {
+    if (s[pos] == ' ' || s[pos] == '\t' || s[pos] == '\n') continue;
+    if (std::isdigit(s[pos])) {
+      if (state == find_value) {
+        value = parse_number(s, pos);
+        _data.push_back(value);
+        state = find_comma_or_end;
+        continue;
+      } else {
+        throw std::invalid_argument("wrong data format");
+      }
+    }
+    if (s[pos] == '-') {
+      if (state == find_value && std::isdigit(s[pos + 1])) {
+        value = parse_number(s, pos);
+        state = find_comma_or_end;
+        _data.push_back(value);
+        continue;
+      } else {
+        throw std::invalid_argument("wrong data format");
+      }
+    }
+    if (s[pos] == 't' || s[pos] == 'f') {
+      if (state == find_value) {
+        value = parse_bool(s, pos);
+        state = find_comma_or_end;
+        _data.push_back(value);
+        continue;
+      } else {
+        throw std::invalid_argument("wrong data format");
+      }
+    }
+    if (s[pos] == 'n') {
+      if (state == find_value) {
+        parse_null(s, pos);
+        std::any temp;
+        state = find_comma_or_end;
+        _data.push_back(temp);
+        continue;
+      } else {
+        throw std::invalid_argument("wrong data format");
+      }
+    }
+    if (s[pos] == ',') {
+      if (state == find_comma_or_end) {
+        state = find_value;
+        continue;
+      } else {
+        throw std::invalid_argument("wrong data format");
+      }
+    }
+    if (s[pos] == '[') {
+      if (state == find_value) {
+        std::string sub = s.substr(pos);
+        value = Json(sub);
+        state = find_comma_or_end;
+        _data.push_back(value);
+        brace_check(s, pos, false);
+        continue;
+      } else {
+        throw std::invalid_argument("wrong data format");
+      }
+    }
+    if (s[pos] == '{') {
+      if (state == find_value) {
+        std::string sub = s.substr(pos);
+        value = Json(sub);
+        state = find_comma_or_end;
+        _data.push_back(value);
+        brace_check(s, pos, true);
+        continue;
+      } else {
+        throw std::invalid_argument("wrong data format");
+      }
+    }
+    if (s[pos] == ']') {
+      if (state == find_comma_or_end)
+        break;
+      else
+        throw std::invalid_argument("wrong data format");
+    }
+  }
+  return _data;
 }
 
 std::string Json::parse_string(const std::string& s, size_t& pos) {
